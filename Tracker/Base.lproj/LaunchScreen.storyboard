@@ -13,7 +13,18 @@
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="LaunchLogo" translatesAutoresizingMaskIntoConstraints="NO" id="XgS-7p-Lgo">
+                                <rect key="frame" x="142" y="286.5" width="91" height="94"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.2156862745" green="0.4470588235" blue="0.9058823529" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="XgS-7p-Lgo" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="6fR-xC-X01"/>
+                            <constraint firstItem="XgS-7p-Lgo" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="8Bw-K8-mx2"/>
+                            <constraint firstItem="XgS-7p-Lgo" firstAttribute="width" constant="91" id="BdH-Fw-D31"/>
+                            <constraint firstItem="XgS-7p-Lgo" firstAttribute="height" constant="94" id="UbM-Lu-J82"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                 </viewController>
@@ -22,4 +33,7 @@
             <point key="canvasLocation" x="53" y="375"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="LaunchLogo" width="91" height="94"/>
+    </resources>
 </document>
