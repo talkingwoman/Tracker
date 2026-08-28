@@ -1,3 +1,10 @@
+//
+//  SceneDelegate.swift
+//  Tracker
+//
+//  Created by Victoria Soboleva on 19.07.2026.
+//
+
 import UIKit
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -8,14 +15,11 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
-        guard let windowScene = scene as? UIWindowScene else {
-            return
-        }
+        guard let windowScene = scene as? UIWindowScene else { return }
 
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = TabBarController()
         window.makeKeyAndVisible()
-
         self.window = window
     }
 }

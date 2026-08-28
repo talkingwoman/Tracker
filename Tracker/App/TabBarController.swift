@@ -1,18 +1,28 @@
+//
+//  TabBarController.swift
+//  Tracker
+//
+//  Created by Victoria Soboleva on 28.08.2026.
+//
+
 import UIKit
 
 final class TabBarController: UITabBarController {
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupTabBar()
         setupViewControllers()
     }
+
+    // MARK: - Private Methods
 
     private func setupTabBar() {
         tabBar.tintColor = TrackerColors.blue
         tabBar.unselectedItemTintColor = TrackerColors.gray
         tabBar.backgroundColor = .systemBackground
+
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .systemBackground
@@ -22,31 +32,29 @@ final class TabBarController: UITabBarController {
     }
 
     private func setupViewControllers() {
-        let trackersViewController = TrackersViewController()
-        let trackersNavigationController = UINavigationController(
-            rootViewController: trackersViewController
-        )
+        viewControllers = [
+            makeTrackersNavigationController(),
+            makeStatisticsNavigationController()
+        ]
+    }
 
-        trackersNavigationController.tabBarItem = UITabBarItem(
+    private func makeTrackersNavigationController() -> UINavigationController {
+        let navigationController = UINavigationController(rootViewController: TrackersViewController())
+        navigationController.tabBarItem = UITabBarItem(
             title: "Трекеры",
             image: UIImage(systemName: "record.circle.fill"),
             selectedImage: UIImage(systemName: "record.circle.fill")
         )
+        return navigationController
+    }
 
-        let statisticsViewController = StatisticsViewController()
-        let statisticsNavigationController = UINavigationController(
-            rootViewController: statisticsViewController
-        )
-
-        statisticsNavigationController.tabBarItem = UITabBarItem(
+    private func makeStatisticsNavigationController() -> UINavigationController {
+        let navigationController = UINavigationController(rootViewController: StatisticsViewController())
+        navigationController.tabBarItem = UITabBarItem(
             title: "Статистика",
             image: UIImage(systemName: "hare.fill"),
             selectedImage: UIImage(systemName: "hare.fill")
         )
-
-        viewControllers = [
-            trackersNavigationController,
-            statisticsNavigationController
-        ]
+        return navigationController
     }
 }
