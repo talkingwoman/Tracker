@@ -13,6 +13,12 @@ final class TabBarController: UITabBarController {
         tabBar.tintColor = TrackerColors.blue
         tabBar.unselectedItemTintColor = TrackerColors.gray
         tabBar.backgroundColor = .systemBackground
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .systemBackground
+        appearance.shadowColor = TrackerColors.gray.withAlphaComponent(0.5)
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
     }
 
     private func setupViewControllers() {

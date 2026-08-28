@@ -10,7 +10,7 @@ enum TrackerColors {
     static let dateBackground = UIColor(named: "TrackerDateBackground") ?? .secondarySystemBackground
 }
 
-private enum WeekDay: Int, CaseIterable, Hashable {
+enum WeekDay: Int, CaseIterable, Hashable {
     case monday, tuesday, wednesday, thursday, friday, saturday, sunday
 
     var title: String {
@@ -22,11 +22,22 @@ private enum WeekDay: Int, CaseIterable, Hashable {
     }
 }
 
-private struct Tracker {
+struct Tracker {
+    let id: UUID
     let title: String
-    let schedule: Set<WeekDay>
     let color: UIColor
     let emoji: String
+    let schedule: Set<WeekDay>
+}
+
+struct TrackerCategory {
+    let title: String
+    let trackers: [Tracker]
+}
+
+struct TrackerRecord {
+    let id: UUID
+    let date: Date
 }
 
 private enum TrackerCreationMode {
@@ -42,7 +53,11 @@ private enum TrackerCreationMode {
 }
 
 final class TrackersViewController: UIViewController {
-    private var trackers: [Tracker] = [] { didSet { updateContent() } }
+    private var categories: [TrackerCategory] = [
+        TrackerCategory(title: "По умолчанию", trackers: [])
+    ]
+    private var completedTrackers: [TrackerRecord] = []
+    private var currentDate = Date()
 
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -79,6 +94,16 @@ final class TrackersViewController: UIViewController {
 
     private let searchController = UISearchController(searchResultsController: nil)
 
+    private lazy var datePicker: UIDatePicker = {
+        let picker = UIDatePicker()
+        picker.datePickerMode = .date
+        picker.preferredDatePickerStyle = .compact
+        picker.locale = Locale(identifier: "ru_RU")
+        picker.date = currentDate
+        picker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
+        return picker
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -90,21 +115,17 @@ final class TrackersViewController: UIViewController {
         updateContent()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+    }
+
     private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addTracker))
         navigationItem.leftBarButtonItem?.tintColor = .label
-        let dateButton = UIButton(type: .system)
-        var dateConfiguration = UIButton.Configuration.plain()
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
-        formatter.dateFormat = "dd.MM.yy"
-        dateConfiguration.title = formatter.string(from: .now)
-        dateConfiguration.baseForegroundColor = TrackerColors.black
-        dateConfiguration.background.backgroundColor = TrackerColors.dateBackground
-        dateConfiguration.background.cornerRadius = 8
-        dateConfiguration.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8)
-        dateButton.configuration = dateConfiguration
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: dateButton)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
 
         searchController.searchBar.placeholder = "Поиск"
         searchController.obscuresBackgroundDuringPresentation = false
@@ -132,18 +153,30 @@ final class TrackersViewController: UIViewController {
 
     private var visibleTrackers: [Tracker] {
         let query = searchController.searchBar.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        let weekDayIndex = (Calendar.current.component(.weekday, from: .now) + 5) % 7
+        let weekDayIndex = (Calendar.current.component(.weekday, from: currentDate) + 5) % 7
         guard let currentWeekDay = WeekDay(rawValue: weekDayIndex) else { return [] }
 
-        return trackers.filter { tracker in
-            let isScheduledForToday = tracker.schedule.isEmpty || tracker.schedule.contains(currentWeekDay)
+        return categories.flatMap(\.trackers).filter { tracker in
+            let isScheduledForSelectedDate = tracker.schedule.isEmpty || tracker.schedule.contains(currentWeekDay)
             let matchesSearch = query.isEmpty || tracker.title.localizedCaseInsensitiveContains(query)
-            return isScheduledForToday && matchesSearch
+            return isScheduledForSelectedDate && matchesSearch
         }
+    }
+
+    private func isCompleted(_ tracker: Tracker, on date: Date) -> Bool {
+        let calendar = Calendar.current
+        return completedTrackers.contains {
+            $0.id == tracker.id && calendar.isDate($0.date, inSameDayAs: date)
+        }
+    }
+
+    private func completedDaysCount(for tracker: Tracker) -> Int {
+        completedTrackers.filter { $0.id == tracker.id }.count
     }
 
     private func updateContent() {
         let isEmpty = visibleTrackers.isEmpty
+        let wasCollectionHidden = collectionView.isHidden
         let hasSearchQuery = !(searchController.searchBar.text?
             .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
         emptyLabel.text = hasSearchQuery ? "Ничего не найдено" : "Что будем отслеживать?"
@@ -151,6 +184,13 @@ final class TrackersViewController: UIViewController {
         emptyLabel.isHidden = !isEmpty
         collectionView.isHidden = isEmpty
         collectionView.reloadData()
+        if wasCollectionHidden && !isEmpty {
+            view.layoutIfNeeded()
+            collectionView.setContentOffset(
+                CGPoint(x: 0, y: -collectionView.adjustedContentInset.top),
+                animated: false
+            )
+        }
     }
 
     @objc private func addTracker() {
@@ -158,13 +198,46 @@ final class TrackersViewController: UIViewController {
         controller.delegate = self
         present(UINavigationController(rootViewController: controller), animated: true)
     }
+
+    @objc private func dateChanged(_ sender: UIDatePicker) {
+        currentDate = sender.date
+        updateContent()
+    }
+
+    private func toggleCompletion(for tracker: Tracker) {
+        let calendar = Calendar.current
+        let selectedDay = calendar.startOfDay(for: currentDate)
+        guard selectedDay <= calendar.startOfDay(for: Date()) else { return }
+
+        if let index = completedTrackers.firstIndex(where: {
+            $0.id == tracker.id && calendar.isDate($0.date, inSameDayAs: selectedDay)
+        }) {
+            completedTrackers.remove(at: index)
+        } else {
+            completedTrackers.append(TrackerRecord(id: tracker.id, date: selectedDay))
+        }
+        collectionView.reloadData()
+    }
 }
 
 extension TrackersViewController: NewHabitViewControllerDelegate {
     fileprivate func didCreateHabit(title: String, schedule: Set<WeekDay>, from controller: UIViewController) {
         let colors: [UIColor] = [.systemBlue, .systemRed, .systemGreen, .systemOrange, .systemPurple]
         let emojis = ["⭐️", "❤️", "🙂", "🏃‍♀️", "📚"]
-        trackers.append(Tracker(title: title, schedule: schedule, color: colors[trackers.count % colors.count], emoji: emojis[trackers.count % emojis.count]))
+        let trackersCount = categories.flatMap(\.trackers).count
+        let tracker = Tracker(
+            id: UUID(),
+            title: title,
+            color: colors[trackersCount % colors.count],
+            emoji: emojis[trackersCount % emojis.count],
+            schedule: schedule
+        )
+        let defaultCategory = categories[0]
+        categories[0] = TrackerCategory(
+            title: defaultCategory.title,
+            trackers: defaultCategory.trackers + [tracker]
+        )
+        updateContent()
         controller.dismiss(animated: true)
     }
 }
@@ -178,7 +251,14 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.id, for: indexPath) as! TrackerCell
-        cell.configure(with: visibleTrackers[indexPath.item])
+        let tracker = visibleTrackers[indexPath.item]
+        cell.configure(
+            with: tracker,
+            isCompleted: isCompleted(tracker, on: currentDate),
+            completedDays: completedDaysCount(for: tracker),
+            completionEnabled: Calendar.current.startOfDay(for: currentDate) <= Calendar.current.startOfDay(for: Date())
+        )
+        cell.completionTapped = { [weak self] in self?.toggleCompletion(for: tracker) }
         return cell
     }
 
@@ -187,22 +267,24 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.id, for: indexPath)
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.id, for: indexPath) as! SectionHeader
+        header.configure(title: categories.first?.title ?? "По умолчанию")
+        return header
     }
 }
 
 private final class SectionHeader: UICollectionReusableView {
     static let id = "SectionHeader"
+    private let label = UILabel()
     override init(frame: CGRect) {
         super.init(frame: frame)
-        let label = UILabel()
-        label.text = "Важное"
         label.font = .systemFont(ofSize: 19, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
         NSLayoutConstraint.activate([label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12), label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)])
     }
     required init?(coder: NSCoder) { nil }
+    func configure(title: String) { label.text = title }
 }
 
 private final class TrackerCell: UICollectionViewCell {
@@ -212,6 +294,7 @@ private final class TrackerCell: UICollectionViewCell {
     private let name = UILabel()
     private let days = UILabel()
     private let plus = UIButton(type: .system)
+    var completionTapped: (() -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -232,6 +315,7 @@ private final class TrackerCell: UICollectionViewCell {
         plus.setImage(UIImage(systemName: "plus"), for: .normal)
         plus.tintColor = .white
         plus.layer.cornerRadius = 17
+        plus.addTarget(self, action: #selector(completionButtonTapped), for: .touchUpInside)
         plus.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(card)
         card.addSubview(emoji)
@@ -248,12 +332,34 @@ private final class TrackerCell: UICollectionViewCell {
     }
 
     required init?(coder: NSCoder) { nil }
-    func configure(with tracker: Tracker) {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        completionTapped = nil
+    }
+
+    func configure(with tracker: Tracker, isCompleted: Bool, completedDays: Int, completionEnabled: Bool) {
         card.backgroundColor = tracker.color
         plus.backgroundColor = tracker.color
         emoji.text = tracker.emoji
         name.text = tracker.title
-        days.text = "0 дней"
+        plus.setImage(UIImage(systemName: isCompleted ? "checkmark" : "plus"), for: .normal)
+        plus.backgroundColor = isCompleted ? tracker.color.withAlphaComponent(0.3) : tracker.color
+        plus.isEnabled = completionEnabled
+        plus.alpha = completionEnabled ? 1 : 0.3
+        days.text = daysText(completedDays)
+    }
+
+    @objc private func completionButtonTapped() { completionTapped?() }
+
+    private func daysText(_ count: Int) -> String {
+        let mod100 = count % 100
+        let mod10 = count % 10
+        let ending: String
+        if mod100 >= 11 && mod100 <= 14 { ending = "дней" }
+        else if mod10 == 1 { ending = "день" }
+        else if mod10 >= 2 && mod10 <= 4 { ending = "дня" }
+        else { ending = "дней" }
+        return "\(count) \(ending)"
     }
 }
 
@@ -336,8 +442,19 @@ private final class NewHabitViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = mode.navigationTitle
+        navigationItem.hidesBackButton = true
         view.backgroundColor = .systemBackground
+        removeNavigationBarSeparator()
         setupUI()
+    }
+
+    private func removeNavigationBarSeparator() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .systemBackground
+        appearance.shadowColor = .clear
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
 
     private func setupUI() {
@@ -356,6 +473,7 @@ private final class NewHabitViewController: UIViewController {
         tableView.backgroundColor = .clear
         tableView.rowHeight = 75
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.tableFooterView = UIView()
         tableView.layer.cornerRadius = 16
         tableView.clipsToBounds = true
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -420,6 +538,8 @@ extension NewHabitViewController: UITableViewDataSource, UITableViewDelegate {
         }
         cell.accessoryType = .disclosureIndicator
         cell.backgroundColor = TrackerColors.fieldBackground
+        cell.textLabel?.font = .systemFont(ofSize: 17)
+        cell.detailTextLabel?.font = .systemFont(ofSize: 17)
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -472,11 +592,19 @@ private final class ScheduleViewController: UIViewController, UITableViewDataSou
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Расписание"
+        navigationItem.hidesBackButton = true
         view.backgroundColor = .systemBackground
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .systemBackground
+        appearance.shadowColor = .clear
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
         tableView.dataSource = self
         tableView.isScrollEnabled = true
         tableView.rowHeight = 75
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.tableFooterView = UIView()
         tableView.layer.cornerRadius = 16
         tableView.clipsToBounds = true
         tableView.backgroundColor = .clear
