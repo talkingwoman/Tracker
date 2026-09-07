@@ -12,6 +12,7 @@ enum TrackerColors {
     static let blue = UIColor(named: "TrackerBlue") ?? .systemBlue
     static let gray = UIColor(named: "TrackerGray") ?? .systemGray
     static let red = UIColor(named: "TrackerRed") ?? .systemRed
+    static let selectionBackground = UIColor(named: "TrackerBackground") ?? .secondarySystemBackground
     static let fieldBackground = (UIColor(named: "TrackerBackground") ?? .secondarySystemBackground)
         .withAlphaComponent(0.3)
     static let dateBackground = UIColor(named: "TrackerDateBackground") ?? .secondarySystemBackground
