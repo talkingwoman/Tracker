@@ -9,7 +9,7 @@ import UIKit
 
 final class StatisticsViewController: UIViewController {
     private let emptyImageView: UIImageView = {
-        let image = UIImage(named: "statisticsPlaceholder") ?? UIImage(systemName: "chart.bar.xaxis")
+        let image = UIImage(named: "statisticsPlaceholder") ?? TrackerImages.statisticsPlaceholderFallback
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false

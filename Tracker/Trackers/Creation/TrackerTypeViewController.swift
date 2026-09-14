@@ -9,6 +9,15 @@ import UIKit
 
 final class TrackerTypeViewController: UIViewController {
     weak var delegate: NewTrackerViewControllerDelegate?
+    private let categoryStore: TrackerCategoryStoreProtocol
+
+    init(categoryStore: TrackerCategoryStoreProtocol) {
+        self.categoryStore = categoryStore
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError("init(coder:) не поддерживается") }
 
     // MARK: - Lifecycle
 
@@ -51,7 +60,7 @@ final class TrackerTypeViewController: UIViewController {
     }
 
     private func showCreationScreen(mode: TrackerCreationMode) {
-        let controller = NewTrackerViewController(mode: mode)
+        let controller = NewTrackerViewController(mode: mode, categoryStore: categoryStore)
         controller.delegate = delegate
         navigationController?.pushViewController(controller, animated: true)
     }

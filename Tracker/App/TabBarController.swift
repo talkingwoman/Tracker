@@ -25,7 +25,7 @@ final class TabBarController: UITabBarController {
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) не поддерживается")
+        nil
     }
 
     // MARK: - Lifecycle
@@ -68,8 +68,8 @@ final class TabBarController: UITabBarController {
         )
         navigationController.tabBarItem = UITabBarItem(
             title: "Трекеры",
-            image: UIImage(systemName: "record.circle.fill"),
-            selectedImage: UIImage(systemName: "record.circle.fill")
+            image: TrackerImages.trackersTab,
+            selectedImage: TrackerImages.trackersTab
         )
         return navigationController
     }
@@ -78,8 +78,8 @@ final class TabBarController: UITabBarController {
         let navigationController = UINavigationController(rootViewController: StatisticsViewController())
         navigationController.tabBarItem = UITabBarItem(
             title: "Статистика",
-            image: UIImage(systemName: "hare.fill"),
-            selectedImage: UIImage(systemName: "hare.fill")
+            image: TrackerImages.statisticsTab,
+            selectedImage: TrackerImages.statisticsTab
         )
         return navigationController
     }

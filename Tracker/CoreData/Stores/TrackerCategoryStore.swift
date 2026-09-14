@@ -5,8 +5,27 @@ protocol TrackerCategoryStoreDelegate: AnyObject {
     func trackerCategoryStoreDidUpdate(_ store: TrackerCategoryStore)
 }
 
+protocol TrackerCategoryStoreProtocol: AnyObject {
+    var categories: [TrackerCategory] { get }
+    var onChange: (() -> Void)? { get set }
+    func addCategory(title: String) throws
+}
+
+enum TrackerCategoryStoreError: LocalizedError {
+    case emptyTitle
+    case duplicateTitle
+
+    var errorDescription: String? {
+        switch self {
+        case .emptyTitle: return "Введите название категории"
+        case .duplicateTitle: return "Категория с таким названием уже существует"
+        }
+    }
+}
+
 final class TrackerCategoryStore: NSObject {
     weak var delegate: TrackerCategoryStoreDelegate?
+    var onChange: (() -> Void)?
 
     var categories: [TrackerCategory] {
         fetchedResultsController.fetchedObjects?.map(makeCategory) ?? []
@@ -37,6 +56,22 @@ final class TrackerCategoryStore: NSObject {
         }
     }
 
+    func addCategory(title: String) throws {
+        let normalizedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalizedTitle.isEmpty else { throw TrackerCategoryStoreError.emptyTitle }
+
+        let request: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "title ==[c] %@", normalizedTitle)
+        request.fetchLimit = 1
+        guard try context.count(for: request) == 0 else {
+            throw TrackerCategoryStoreError.duplicateTitle
+        }
+
+        let object = TrackerCategoryCoreData(context: context)
+        object.title = normalizedTitle
+        try context.save()
+    }
+
     private func makeCategory(from object: TrackerCategoryCoreData) -> TrackerCategory {
         let objects = (object.value(forKey: "trackers") as? NSSet)?.allObjects ?? []
         let trackers = objects.compactMap { $0 as? TrackerCoreData }.compactMap(makeTracker)
@@ -62,5 +97,8 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         _ controller: NSFetchedResultsController<NSFetchRequestResult>
     ) {
         delegate?.trackerCategoryStoreDidUpdate(self)
+        onChange?()
     }
 }
+
+extension TrackerCategoryStore: TrackerCategoryStoreProtocol { }

@@ -38,7 +38,7 @@ final class TrackerCell: UICollectionViewCell {
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.title
         daysLabel.text = daysText(completedDays)
-        completionButton.setImage(UIImage(systemName: isCompleted ? "checkmark" : "plus"), for: .normal)
+        completionButton.setImage(isCompleted ? TrackerImages.completed : TrackerImages.add, for: .normal)
         completionButton.backgroundColor = isCompleted ? tracker.color.withAlphaComponent(0.3) : tracker.color
         completionButton.isEnabled = completionEnabled
         completionButton.alpha = completionEnabled ? 1 : 0.3

@@ -13,6 +13,7 @@ protocol NewTrackerViewControllerDelegate: AnyObject {
         emoji: String,
         color: UIColor,
         schedule: Set<WeekDay>,
+        categoryTitle: String,
         from controller: UIViewController
     )
 }

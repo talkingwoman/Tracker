@@ -23,7 +23,9 @@ final class NewTrackerViewController: UIViewController {
     weak var delegate: NewTrackerViewControllerDelegate?
 
     private let mode: TrackerCreationMode
+    private let categoryStore: TrackerCategoryStoreProtocol
     private var schedule: Set<WeekDay> = []
+    private var selectedCategoryTitle: String?
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
     private let scrollView = UIScrollView()
@@ -36,7 +38,7 @@ final class NewTrackerViewController: UIViewController {
 
     private let nameErrorLabel: UILabel = {
         let label = UILabel()
-        label.text = "Ограничение 38 символов"
+        label.text = "Ограничение \(TrackerConstants.maximumNameLength) символов"
         label.textColor = TrackerColors.red
         label.font = .systemFont(ofSize: 17)
         label.textAlignment = .center
@@ -69,8 +71,9 @@ final class NewTrackerViewController: UIViewController {
         return collectionView
     }()
 
-    init(mode: TrackerCreationMode) {
+    init(mode: TrackerCreationMode, categoryStore: TrackerCategoryStoreProtocol) {
         self.mode = mode
+        self.categoryStore = categoryStore
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -83,6 +86,7 @@ final class NewTrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = mode.navigationTitle
+        navigationItem.backButtonDisplayMode = .minimal
         navigationItem.hidesBackButton = true
         view.backgroundColor = .systemBackground
         configureNavigationBar()
@@ -216,12 +220,14 @@ final class NewTrackerViewController: UIViewController {
         guard !trackerTitle.isEmpty,
               let selectedEmoji,
               let selectedColor,
+              let selectedCategoryTitle,
               mode == .irregularEvent || !schedule.isEmpty else { return }
         delegate?.didCreateTracker(
             title: trackerTitle,
             emoji: selectedEmoji,
             color: selectedColor,
             schedule: schedule,
+            categoryTitle: selectedCategoryTitle,
             from: self
         )
     }
@@ -229,7 +235,11 @@ final class NewTrackerViewController: UIViewController {
     @objc private func updateCreateButton() {
         let trackerTitle = nameField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let hasSchedule = mode == .irregularEvent || !schedule.isEmpty
-        let canCreate = !trackerTitle.isEmpty && selectedEmoji != nil && selectedColor != nil && hasSchedule
+        let canCreate = !trackerTitle.isEmpty
+            && selectedCategoryTitle != nil
+            && selectedEmoji != nil
+            && selectedColor != nil
+            && hasSchedule
         createButton.isEnabled = canCreate
         createButton.backgroundColor = canCreate ? TrackerColors.black : TrackerColors.gray
     }
@@ -245,6 +255,9 @@ extension NewTrackerViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
         cell.textLabel?.text = indexPath.row == 0 ? "Категория" : "Расписание"
+        if indexPath.row == 0 {
+            cell.detailTextLabel?.text = selectedCategoryTitle
+        }
         if indexPath.row == 1, !schedule.isEmpty {
             cell.detailTextLabel?.text = schedule.count == 7
                 ? "Каждый день"
@@ -259,7 +272,18 @@ extension NewTrackerViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard indexPath.row == 1 else { return }
+        if indexPath.row == 0 {
+            let viewModel = CategoryViewModel(store: categoryStore, selectedTitle: selectedCategoryTitle)
+            viewModel.onCategorySelected = { [weak self] title in
+                self?.selectedCategoryTitle = title
+                self?.tableView.reloadData()
+                self?.updateCreateButton()
+                self?.navigationController?.popViewController(animated: true)
+            }
+            let controller = CategoryViewController(viewModel: viewModel)
+            navigationController?.pushViewController(controller, animated: true)
+            return
+        }
         let controller = ScheduleViewController(selectedDays: schedule)
         controller.delegate = self
         navigationController?.pushViewController(controller, animated: true)
@@ -350,7 +374,7 @@ extension NewTrackerViewController: UITextFieldDelegate {
         guard let currentText = textField.text,
               let textRange = Range(range, in: currentText) else { return true }
         let updatedText = currentText.replacingCharacters(in: textRange, with: string)
-        let isWithinLimit = updatedText.count <= 38
+        let isWithinLimit = updatedText.count <= TrackerConstants.maximumNameLength
         nameErrorLabel.isHidden = isWithinLimit
         nameErrorHeightConstraint?.constant = isWithinLimit ? 0 : 22
         return isWithinLimit

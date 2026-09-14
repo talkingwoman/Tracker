@@ -16,16 +16,31 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         options connectionOptions: UIScene.ConnectionOptions
     ) {
         guard let windowScene = scene as? UIWindowScene else { return }
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
 
-        let stores = appDelegate.makeStores()
+        let stores = DataBaseStore.shared.makeStores()
 
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = TabBarController(
+        let tabBarController = TabBarController(
             trackerStore: stores.trackerStore,
             categoryStore: stores.categoryStore,
             recordStore: stores.recordStore
         )
+        var onboardingState = OnboardingStateStore()
+        if onboardingState.isCompleted {
+            window.rootViewController = tabBarController
+        } else {
+            let onboarding = OnboardingViewController()
+            onboarding.completionTapped = { [weak window] in
+                onboardingState.isCompleted = true
+                UIView.transition(
+                    with: window ?? UIWindow(),
+                    duration: 0.3,
+                    options: .transitionCrossDissolve,
+                    animations: { window?.rootViewController = tabBarController }
+                )
+            }
+            window.rootViewController = onboarding
+        }
         window.makeKeyAndVisible()
         self.window = window
     }

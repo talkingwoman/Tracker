@@ -54,7 +54,7 @@ final class TrackersViewController: UIViewController {
     }()
 
     private let emptyImageView: UIImageView = {
-        let image = UIImage(named: "trackerPlaceholder") ?? UIImage(systemName: "star.fill")
+        let image = UIImage(named: "trackerPlaceholder") ?? TrackerImages.trackerPlaceholderFallback
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -110,7 +110,7 @@ final class TrackersViewController: UIViewController {
 
     private func configureNavigationBar() {
         let addButton = UIBarButtonItem(
-            image: UIImage(systemName: "plus"),
+            image: TrackerImages.add,
             style: .plain,
             target: self,
             action: #selector(addTracker)
@@ -219,7 +219,7 @@ final class TrackersViewController: UIViewController {
     // MARK: - Actions
 
     @objc private func addTracker() {
-        let controller = TrackerTypeViewController()
+        let controller = TrackerTypeViewController(categoryStore: categoryStore)
         controller.delegate = self
         present(UINavigationController(rootViewController: controller), animated: true)
     }
@@ -238,6 +238,7 @@ extension TrackersViewController: NewTrackerViewControllerDelegate {
         emoji: String,
         color: UIColor,
         schedule: Set<WeekDay>,
+        categoryTitle: String,
         from controller: UIViewController
     ) {
         let tracker = Tracker(
@@ -248,7 +249,7 @@ extension TrackersViewController: NewTrackerViewControllerDelegate {
             schedule: schedule
         )
         do {
-            try trackerStore.add(tracker, categoryTitle: "По умолчанию")
+            try trackerStore.add(tracker, categoryTitle: categoryTitle)
             controller.dismiss(animated: true)
         } catch {
             assertionFailure("Не удалось сохранить трекер: \(error)")
