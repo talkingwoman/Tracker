@@ -16,9 +16,16 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         options connectionOptions: UIScene.ConnectionOptions
     ) {
         guard let windowScene = scene as? UIWindowScene else { return }
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+
+        let stores = appDelegate.makeStores()
 
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = TabBarController()
+        window.rootViewController = TabBarController(
+            trackerStore: stores.trackerStore,
+            categoryStore: stores.categoryStore,
+            recordStore: stores.recordStore
+        )
         window.makeKeyAndVisible()
         self.window = window
     }

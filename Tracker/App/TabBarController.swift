@@ -8,6 +8,26 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
+    private let trackerStore: TrackerStore
+    private let categoryStore: TrackerCategoryStore
+    private let recordStore: TrackerRecordStore
+
+    init(
+        trackerStore: TrackerStore,
+        categoryStore: TrackerCategoryStore,
+        recordStore: TrackerRecordStore
+    ) {
+        self.trackerStore = trackerStore
+        self.categoryStore = categoryStore
+        self.recordStore = recordStore
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) не поддерживается")
+    }
+
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
@@ -39,7 +59,13 @@ final class TabBarController: UITabBarController {
     }
 
     private func makeTrackersNavigationController() -> UINavigationController {
-        let navigationController = UINavigationController(rootViewController: TrackersViewController())
+        let navigationController = UINavigationController(
+            rootViewController: TrackersViewController(
+                trackerStore: trackerStore,
+                categoryStore: categoryStore,
+                recordStore: recordStore
+            )
+        )
         navigationController.tabBarItem = UITabBarItem(
             title: "Трекеры",
             image: UIImage(systemName: "record.circle.fill"),

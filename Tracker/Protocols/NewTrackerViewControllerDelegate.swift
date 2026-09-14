@@ -8,5 +8,11 @@
 import UIKit
 
 protocol NewTrackerViewControllerDelegate: AnyObject {
-    func didCreateTracker(title: String, schedule: Set<WeekDay>, from controller: UIViewController)
+    func didCreateTracker(
+        title: String,
+        emoji: String,
+        color: UIColor,
+        schedule: Set<WeekDay>,
+        from controller: UIViewController
+    )
 }

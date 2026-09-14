@@ -8,11 +8,29 @@
 import UIKit
 
 final class TrackersViewController: UIViewController {
-    private var categories: [TrackerCategory] = [
-        TrackerCategory(title: "По умолчанию", trackers: [])
-    ]
+    private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var currentDate = Date()
+
+    private let trackerStore: TrackerStore
+    private let categoryStore: TrackerCategoryStore
+    private let recordStore: TrackerRecordStore
+
+    init(
+        trackerStore: TrackerStore,
+        categoryStore: TrackerCategoryStore,
+        recordStore: TrackerRecordStore
+    ) {
+        self.trackerStore = trackerStore
+        self.categoryStore = categoryStore
+        self.recordStore = recordStore
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) не поддерживается")
+    }
 
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -67,6 +85,10 @@ final class TrackersViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        trackerStore.delegate = self
+        categoryStore.delegate = self
+        recordStore.delegate = self
+        reloadDataFromStores()
         view.backgroundColor = .systemBackground
         title = "Трекеры"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -87,13 +109,16 @@ final class TrackersViewController: UIViewController {
     // MARK: - Private Methods
 
     private func configureNavigationBar() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
+        let addButton = UIBarButtonItem(
             image: UIImage(systemName: "plus"),
             style: .plain,
             target: self,
             action: #selector(addTracker)
         )
-        navigationItem.leftBarButtonItem?.tintColor = .label
+        addButton.accessibilityLabel = "Добавить трекер"
+        addButton.tintColor = .label
+        navigationItem.leftBarButtonItem = addButton
+        datePicker.accessibilityLabel = "Выбрать дату"
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
 
         searchController.searchBar.placeholder = "Поиск"
@@ -164,19 +189,31 @@ final class TrackersViewController: UIViewController {
         }
     }
 
+    private func reloadDataFromStores() {
+        categories = categoryStore.categories
+        completedTrackers = recordStore.records
+    }
+
     private func toggleCompletion(for tracker: Tracker) {
         let calendar = Calendar.current
         let selectedDay = calendar.startOfDay(for: currentDate)
         guard selectedDay <= calendar.startOfDay(for: Date()) else { return }
 
-        if let index = completedTrackers.firstIndex(where: {
+        if completedTrackers.contains(where: {
             $0.id == tracker.id && calendar.isDate($0.date, inSameDayAs: selectedDay)
         }) {
-            completedTrackers.remove(at: index)
+            do {
+                try recordStore.delete(trackerID: tracker.id, date: selectedDay)
+            } catch {
+                assertionFailure("Не удалось удалить отметку: \(error)")
+            }
         } else {
-            completedTrackers.append(TrackerRecord(id: tracker.id, date: selectedDay))
+            do {
+                try recordStore.add(TrackerRecord(id: tracker.id, date: selectedDay))
+            } catch {
+                assertionFailure("Не удалось сохранить отметку: \(error)")
+            }
         }
-        collectionView.reloadData()
     }
 
     // MARK: - Actions
@@ -196,24 +233,49 @@ final class TrackersViewController: UIViewController {
 // MARK: - NewTrackerViewControllerDelegate
 
 extension TrackersViewController: NewTrackerViewControllerDelegate {
-    func didCreateTracker(title: String, schedule: Set<WeekDay>, from controller: UIViewController) {
-        let colors: [UIColor] = [.systemBlue, .systemRed, .systemGreen, .systemOrange, .systemPurple]
-        let emojis = ["⭐️", "❤️", "🙂", "🏃‍♀️", "📚"]
-        let trackersCount = categories.flatMap(\.trackers).count
+    func didCreateTracker(
+        title: String,
+        emoji: String,
+        color: UIColor,
+        schedule: Set<WeekDay>,
+        from controller: UIViewController
+    ) {
         let tracker = Tracker(
             id: UUID(),
             title: title,
-            color: colors[trackersCount % colors.count],
-            emoji: emojis[trackersCount % emojis.count],
+            color: color,
+            emoji: emoji,
             schedule: schedule
         )
-        let defaultCategory = categories[0]
-        categories[0] = TrackerCategory(
-            title: defaultCategory.title,
-            trackers: defaultCategory.trackers + [tracker]
-        )
+        do {
+            try trackerStore.add(tracker, categoryTitle: "По умолчанию")
+            controller.dismiss(animated: true)
+        } catch {
+            assertionFailure("Не удалось сохранить трекер: \(error)")
+        }
+    }
+}
+
+// MARK: - Store Delegates
+
+extension TrackersViewController: TrackerStoreDelegate {
+    func trackerStoreDidUpdate(_ store: TrackerStore) {
+        reloadDataFromStores()
         updateContent()
-        controller.dismiss(animated: true)
+    }
+}
+
+extension TrackersViewController: TrackerCategoryStoreDelegate {
+    func trackerCategoryStoreDidUpdate(_ store: TrackerCategoryStore) {
+        reloadDataFromStores()
+        updateContent()
+    }
+}
+
+extension TrackersViewController: TrackerRecordStoreDelegate {
+    func trackerRecordStoreDidUpdate(_ store: TrackerRecordStore) {
+        reloadDataFromStores()
+        updateContent()
     }
 }
 
