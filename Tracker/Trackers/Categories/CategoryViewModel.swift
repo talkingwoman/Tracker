@@ -45,7 +45,9 @@ final class CategoryViewModel {
             reload()
             return true
         } catch {
-            onError?((error as? LocalizedError)?.errorDescription ?? "Не удалось сохранить категорию")
+            let message = (error as? TrackerCategoryStoreError)?.message
+                ?? "Не удалось сохранить категорию"
+            onError?(message)
             return false
         }
     }

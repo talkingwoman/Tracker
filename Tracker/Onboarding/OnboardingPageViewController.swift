@@ -10,7 +10,7 @@ final class OnboardingPageViewController: UIViewController {
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError("init(coder:) не поддерживается") }
+    required init?(coder: NSCoder) { nil }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,7 +18,7 @@ final class OnboardingPageViewController: UIViewController {
     }
 
     private func configureUI() {
-        let imageView = UIImageView(image: UIImage(named: page.imageName))
+        let imageView = UIImageView(image: UIImage(resource: page.image))
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false

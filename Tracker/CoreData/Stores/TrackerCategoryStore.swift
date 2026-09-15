@@ -11,14 +11,14 @@ protocol TrackerCategoryStoreProtocol: AnyObject {
     func addCategory(title: String) throws
 }
 
-enum TrackerCategoryStoreError: LocalizedError {
+enum TrackerCategoryStoreError: Error {
     case emptyTitle
     case duplicateTitle
 
-    var errorDescription: String? {
+    var message: String {
         switch self {
-        case .emptyTitle: return "Введите название категории"
-        case .duplicateTitle: return "Категория с таким названием уже существует"
+        case .emptyTitle: "Введите название категории"
+        case .duplicateTitle: "Категория с таким названием уже существует"
         }
     }
 }

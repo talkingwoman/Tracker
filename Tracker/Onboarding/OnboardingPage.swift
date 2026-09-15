@@ -1,16 +1,16 @@
-import Foundation
+import UIKit
 
 struct OnboardingPage {
-    let imageName: String
+    let image: ImageResource
     let title: String
 
     static let pages = [
         OnboardingPage(
-            imageName: "OnboardingBlue",
+            image: .onboardingBlue,
             title: "Отслеживайте только то, что хотите"
         ),
         OnboardingPage(
-            imageName: "OnboardingRed",
+            image: .onboardingRed,
             title: "Даже если это\nне литры воды и йога"
         )
     ]
