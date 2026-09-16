@@ -55,7 +55,35 @@ final class TrackerStore: NSObject {
         guard let object = fetchedResultsController.fetchedObjects?.first(where: { $0.id == id }) else {
             return
         }
+        // Records store the tracker UUID rather than a relationship: delete them in
+        // the same transaction so statistics cannot retain orphaned completions.
+        let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        try context.fetch(request).forEach(context.delete)
         context.delete(object)
+        try context.save()
+    }
+
+    func update(_ tracker: Tracker, categoryTitle: String) throws {
+        guard let object = fetchedResultsController.fetchedObjects?.first(where: { $0.id == tracker.id }) else {
+            return
+        }
+        let request: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "title == %@", categoryTitle)
+        request.fetchLimit = 1
+        let category = try context.fetch(request).first ?? TrackerCategoryCoreData(context: context)
+        category.title = categoryTitle
+        object.title = tracker.title
+        object.emoji = tracker.emoji
+        object.category = category
+        object.setValue(tracker.color, forKey: "color")
+        object.setValue(tracker.schedule.map(\.rawValue), forKey: "schedule")
+        try context.save()
+    }
+
+    func setPinned(_ isPinned: Bool, id: UUID) throws {
+        guard let object = fetchedResultsController.fetchedObjects?.first(where: { $0.id == id }) else { return }
+        object.isPinned = isPinned
         try context.save()
     }
 }

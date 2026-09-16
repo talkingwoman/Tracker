@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RswiftResources
 
 final class TrackerTypeViewController: UIViewController {
     weak var delegate: NewTrackerViewControllerDelegate?
@@ -23,16 +24,16 @@ final class TrackerTypeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Создание трекера"
-        view.backgroundColor = .systemBackground
+        title = R.string.localizable.creationTitle()
+        view.backgroundColor = TrackerColors.background
         setupButtons()
     }
 
     // MARK: - Private Methods
 
     private func setupButtons() {
-        let habitButton = makeButton(title: "Привычка", action: #selector(createHabit))
-        let eventButton = makeButton(title: "Нерегулярное событие", action: #selector(createIrregularEvent))
+        let habitButton = makeButton(title: R.string.localizable.creationHabit(), action: #selector(createHabit))
+        let eventButton = makeButton(title: R.string.localizable.creationEvent(), action: #selector(createIrregularEvent))
         let stackView = UIStackView(arrangedSubviews: [habitButton, eventButton])
         stackView.axis = .vertical
         stackView.spacing = 16
@@ -51,9 +52,9 @@ final class TrackerTypeViewController: UIViewController {
     private func makeButton(title: String, action: Selector) -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle(title, for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(TrackerColors.background, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.backgroundColor = TrackerColors.black
+        button.backgroundColor = TrackerColors.primary
         button.layer.cornerRadius = 16
         button.addTarget(self, action: action, for: .touchUpInside)
         return button

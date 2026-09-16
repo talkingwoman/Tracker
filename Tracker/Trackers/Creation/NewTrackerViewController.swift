@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RswiftResources
 
 final class NewTrackerViewController: UIViewController {
     private enum OptionsSection: Int, CaseIterable {
@@ -14,13 +15,16 @@ final class NewTrackerViewController: UIViewController {
 
         var title: String {
             switch self {
-            case .emoji: return "Emoji"
-            case .color: return "Цвет"
+            case .emoji: return R.string.localizable.creationEmoji()
+            case .color: return R.string.localizable.creationColor()
             }
         }
     }
 
     weak var delegate: NewTrackerViewControllerDelegate?
+    var onSaveEdit: ((Tracker, String) -> Void)?
+    private var editingTracker: Tracker?
+    private var completedDays = 0
 
     private let mode: TrackerCreationMode
     private let categoryStore: TrackerCategoryStoreProtocol
@@ -38,10 +42,12 @@ final class NewTrackerViewController: UIViewController {
 
     private let nameErrorLabel: UILabel = {
         let label = UILabel()
-        label.text = "Ограничение \(TrackerConstants.maximumNameLength) символов"
+        label.text = R.string.localizable.creationNameLimit(TrackerConstants.maximumNameLength)
         label.textColor = TrackerColors.red
         label.font = .systemFont(ofSize: 17)
         label.textAlignment = .center
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.75
         label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -55,7 +61,7 @@ final class NewTrackerViewController: UIViewController {
         layout.headerReferenceSize = CGSize(width: 0, height: 22)
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .systemBackground
+        collectionView.backgroundColor = TrackerColors.background
         collectionView.isScrollEnabled = false
         collectionView.allowsMultipleSelection = false
         collectionView.dataSource = self
@@ -77,6 +83,17 @@ final class NewTrackerViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    convenience init(tracker: Tracker, categoryTitle: String, completedDays: Int,
+                     categoryStore: TrackerCategoryStoreProtocol) {
+        self.init(mode: tracker.schedule.isEmpty ? .irregularEvent : .habit, categoryStore: categoryStore)
+        editingTracker = tracker
+        self.completedDays = completedDays
+        selectedCategoryTitle = categoryTitle
+        selectedEmoji = tracker.emoji
+        selectedColor = tracker.color
+        schedule = tracker.schedule
+    }
+
     required init?(coder: NSCoder) {
         nil
     }
@@ -85,12 +102,16 @@ final class NewTrackerViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = mode.navigationTitle
+        title = editingTracker == nil ? mode.navigationTitle : R.string.localizable.trackerEditTitle()
         navigationItem.backButtonDisplayMode = .minimal
         navigationItem.hidesBackButton = true
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = TrackerColors.background
         configureNavigationBar()
         configureControls()
+        if let editingTracker {
+            nameField.text = editingTracker.title
+            createButton.setTitle(R.string.localizable.commonSave(), for: .normal)
+        }
         setupViews()
         setupConstraints()
         updateCreateButton()
@@ -101,7 +122,7 @@ final class NewTrackerViewController: UIViewController {
     private func configureNavigationBar() {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .systemBackground
+        appearance.backgroundColor = TrackerColors.background
         appearance.shadowColor = .clear
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
@@ -113,12 +134,17 @@ final class NewTrackerViewController: UIViewController {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
 
-        nameField.placeholder = "Введите название трекера"
+        nameField.placeholder = R.string.localizable.creationNamePlaceholder()
         nameField.backgroundColor = TrackerColors.fieldBackground
         nameField.layer.cornerRadius = 16
         nameField.clearButtonMode = .whileEditing
-        nameField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 1))
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 1))
+        // UITextField mirrors its accessory views automatically in RTL languages.
+        nameField.leftView = paddingView
         nameField.leftViewMode = .always
+        nameField.textAlignment = .natural
+        nameField.adjustsFontSizeToFitWidth = true
+        nameField.minimumFontSize = 12
         nameField.delegate = self
         nameField.addTarget(self, action: #selector(updateCreateButton), for: .editingChanged)
         nameField.translatesAutoresizingMaskIntoConstraints = false
@@ -134,12 +160,12 @@ final class NewTrackerViewController: UIViewController {
         tableView.clipsToBounds = true
         tableView.translatesAutoresizingMaskIntoConstraints = false
 
-        configureButton(cancelButton, title: "Отменить", titleColor: TrackerColors.red, backgroundColor: .systemBackground)
+        configureButton(cancelButton, title: R.string.localizable.commonCancel(), titleColor: TrackerColors.red, backgroundColor: TrackerColors.background)
         cancelButton.layer.borderWidth = 1
         cancelButton.layer.borderColor = TrackerColors.red.cgColor
         cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
 
-        configureButton(createButton, title: "Создать", titleColor: .white, backgroundColor: TrackerColors.gray)
+        configureButton(createButton, title: R.string.localizable.creationCreate(), titleColor: .white, backgroundColor: TrackerColors.gray)
         createButton.addTarget(self, action: #selector(createTapped), for: .touchUpInside)
     }
 
@@ -148,6 +174,8 @@ final class NewTrackerViewController: UIViewController {
         button.setTitleColor(titleColor, for: .normal)
         button.backgroundColor = backgroundColor
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.titleLabel?.minimumScaleFactor = 0.75
         button.layer.cornerRadius = 16
         button.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -185,7 +213,7 @@ final class NewTrackerViewController: UIViewController {
             contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
-            nameField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+            nameField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: editingTracker == nil ? 24 : 94),
             nameField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             nameField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             nameField.heightAnchor.constraint(equalToConstant: 75),
@@ -203,6 +231,17 @@ final class NewTrackerViewController: UIViewController {
             optionsCollectionView.heightAnchor.constraint(equalToConstant: 452),
             optionsCollectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
         ])
+        if editingTracker != nil {
+            let countLabel = UILabel()
+            countLabel.text = R.string.localizable.trackerDays_count(days: completedDays)
+            countLabel.font = .systemFont(ofSize: 32, weight: .bold)
+            countLabel.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview(countLabel)
+            NSLayoutConstraint.activate([
+                countLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+                countLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
+            ])
+        }
     }
 
     private func isSameColor(_ lhs: UIColor?, _ rhs: UIColor) -> Bool {
@@ -222,6 +261,11 @@ final class NewTrackerViewController: UIViewController {
               let selectedColor,
               let selectedCategoryTitle,
               mode == .irregularEvent || !schedule.isEmpty else { return }
+        if let editingTracker {
+            onSaveEdit?(Tracker(id: editingTracker.id, title: trackerTitle, color: selectedColor,
+                emoji: selectedEmoji, schedule: schedule, isPinned: editingTracker.isPinned), selectedCategoryTitle)
+            return
+        }
         delegate?.didCreateTracker(
             title: trackerTitle,
             emoji: selectedEmoji,
@@ -241,7 +285,8 @@ final class NewTrackerViewController: UIViewController {
             && selectedColor != nil
             && hasSchedule
         createButton.isEnabled = canCreate
-        createButton.backgroundColor = canCreate ? TrackerColors.black : TrackerColors.gray
+        createButton.backgroundColor = canCreate ? TrackerColors.primary : TrackerColors.gray
+        createButton.setTitleColor(canCreate ? TrackerColors.background : .white, for: .normal)
     }
 }
 
@@ -254,19 +299,21 @@ extension NewTrackerViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-        cell.textLabel?.text = indexPath.row == 0 ? "Категория" : "Расписание"
+        cell.textLabel?.text = indexPath.row == 0 ? R.string.localizable.categoryTitle() : R.string.localizable.scheduleTitle()
         if indexPath.row == 0 {
             cell.detailTextLabel?.text = selectedCategoryTitle
         }
         if indexPath.row == 1, !schedule.isEmpty {
             cell.detailTextLabel?.text = schedule.count == 7
-                ? "Каждый день"
-                : schedule.sorted { $0.rawValue < $1.rawValue }.map(\.shortTitle).joined(separator: ", ")
+                ? R.string.localizable.scheduleEveryDay()
+                : schedule.sorted { $0.rawValue < $1.rawValue }.map(\.shortTitle).joined(separator: R.string.localizable.scheduleSeparator())
         }
         cell.accessoryType = .disclosureIndicator
         cell.backgroundColor = TrackerColors.fieldBackground
         cell.textLabel?.font = .systemFont(ofSize: 17)
         cell.detailTextLabel?.font = .systemFont(ofSize: 17)
+        cell.detailTextLabel?.adjustsFontSizeToFitWidth = true
+        cell.detailTextLabel?.minimumScaleFactor = 0.75
         return cell
     }
 

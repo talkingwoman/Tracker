@@ -1,0 +1,173 @@
+/* tab.trackers */
+"tab.trackers" = "Трекеры";
+
+/* tab.statistics */
+"tab.statistics" = "Статистика";
+
+/* onboarding.track */
+"onboarding.track" = "Отслеживайте только то, что хотите";
+
+/* onboarding.freedom */
+"onboarding.freedom" = "Даже если это\nне литры воды и йога";
+
+/* onboarding.start */
+"onboarding.start" = "Вот это технологии!";
+
+/* statistics.empty */
+"statistics.empty" = "Анализировать пока нечего";
+
+/* tracker.empty.title */
+"tracker.empty.title" = "Что будем отслеживать?";
+
+/* tracker.search.empty */
+"tracker.search.empty" = "Ничего не найдено";
+
+/* tracker.add */
+"tracker.add" = "Добавить трекер";
+
+/* tracker.date */
+"tracker.date" = "Выбрать дату";
+
+/* tracker.search */
+"tracker.search" = "Поиск";
+
+/* category.default */
+"category.default" = "По умолчанию";
+
+/* category.title */
+"category.title" = "Категория";
+
+/* category.new */
+"category.new" = "Новая категория";
+
+/* category.name.placeholder */
+"category.name.placeholder" = "Введите название категории";
+
+/* category.duplicate */
+"category.duplicate" = "Категория с таким названием уже существует";
+
+/* category.save.error */
+"category.save.error" = "Не удалось сохранить категорию";
+
+/* category.empty */
+"category.empty" = "Привычки и события можно\nобъединить по смыслу";
+
+/* category.add */
+"category.add" = "Добавить категорию";
+
+/* common.error */
+"common.error" = "Ошибка";
+
+/* common.ok */
+"common.ok" = "OK";
+
+/* common.done */
+"common.done" = "Готово";
+
+/* common.cancel */
+"common.cancel" = "Отменить";
+
+/* creation.create */
+"creation.create" = "Создать";
+
+/* creation.title */
+"creation.title" = "Создание трекера";
+
+/* creation.habit */
+"creation.habit" = "Привычка";
+
+/* creation.event */
+"creation.event" = "Нерегулярное событие";
+
+/* creation.new.habit */
+"creation.new.habit" = "Новая привычка";
+
+/* creation.new.event */
+"creation.new.event" = "Новое нерегулярное событие";
+
+/* creation.name.placeholder */
+"creation.name.placeholder" = "Введите название трекера";
+
+/* creation.name.limit */
+"creation.name.limit" = "Ограничение %ld символов";
+
+/* creation.emoji */
+"creation.emoji" = "Emoji";
+
+/* creation.color */
+"creation.color" = "Цвет";
+
+/* tracker.color */
+"tracker.color" = "Цвет трекера";
+
+/* schedule.title */
+"schedule.title" = "Расписание";
+
+/* schedule.every.day */
+"schedule.every.day" = "Каждый день";
+
+/* schedule.separator */
+"schedule.separator" = ", ";
+
+/* tracker.complete */
+"tracker.complete" = "Отметить выполненным";
+
+/* tracker.undo */
+"tracker.undo" = "Отменить выполнение";
+
+/* weekday.monday */
+"weekday.monday" = "Понедельник";
+
+/* weekday.monday.short */
+"weekday.monday.short" = "Пн";
+
+/* weekday.tuesday */
+"weekday.tuesday" = "Вторник";
+
+/* weekday.tuesday.short */
+"weekday.tuesday.short" = "Вт";
+
+/* weekday.wednesday */
+"weekday.wednesday" = "Среда";
+
+/* weekday.wednesday.short */
+"weekday.wednesday.short" = "Ср";
+
+/* weekday.thursday */
+"weekday.thursday" = "Четверг";
+
+/* weekday.thursday.short */
+"weekday.thursday.short" = "Чт";
+
+/* weekday.friday */
+"weekday.friday" = "Пятница";
+
+/* weekday.friday.short */
+"weekday.friday.short" = "Пт";
+
+/* weekday.saturday */
+"weekday.saturday" = "Суббота";
+
+/* weekday.saturday.short */
+"weekday.saturday.short" = "Сб";
+
+/* weekday.sunday */
+"weekday.sunday" = "Воскресенье";
+
+/* weekday.sunday.short */
+"weekday.sunday.short" = "Вс";
+"filter.title" = "Фильтры";
+"filter.all" = "Все трекеры";
+"filter.today" = "Трекеры на сегодня";
+"filter.completed" = "Завершённые";
+"filter.incomplete" = "Незавершённые";
+"tracker.pinned" = "Закреплённые";
+"tracker.pin" = "Закрепить";
+"tracker.unpin" = "Открепить";
+"tracker.edit.title" = "Редактирование привычки";
+"tracker.delete.confirm" = "Уверены, что хотите удалить трекер?";
+"tracker.save.error" = "Не удалось сохранить изменения. Попробуйте ещё раз.";
+"common.edit" = "Редактировать";
+"common.delete" = "Удалить";
+"common.save" = "Сохранить";
+"statistics.completed" = "Трекеров завершено";

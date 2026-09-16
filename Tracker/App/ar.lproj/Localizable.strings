@@ -1,0 +1,173 @@
+/* tab.trackers */
+"tab.trackers" = "المتتبعات";
+
+/* tab.statistics */
+"tab.statistics" = "الإحصاءات";
+
+/* onboarding.track */
+"onboarding.track" = "تتبّع فقط ما تريده";
+
+/* onboarding.freedom */
+"onboarding.freedom" = "حتى لو لم يكن\nشرب الماء أو اليوغا";
+
+/* onboarding.start */
+"onboarding.start" = "لنبدأ!";
+
+/* statistics.empty */
+"statistics.empty" = "لا توجد بيانات لتحليلها بعد";
+
+/* tracker.empty.title */
+"tracker.empty.title" = "ماذا سنتتبّع؟";
+
+/* tracker.search.empty */
+"tracker.search.empty" = "لم يتم العثور على نتائج";
+
+/* tracker.add */
+"tracker.add" = "إضافة متتبّع";
+
+/* tracker.date */
+"tracker.date" = "اختيار التاريخ";
+
+/* tracker.search */
+"tracker.search" = "بحث";
+
+/* category.default */
+"category.default" = "افتراضي";
+
+/* category.title */
+"category.title" = "الفئة";
+
+/* category.new */
+"category.new" = "فئة جديدة";
+
+/* category.name.placeholder */
+"category.name.placeholder" = "أدخل اسم الفئة";
+
+/* category.duplicate */
+"category.duplicate" = "توجد فئة بهذا الاسم بالفعل";
+
+/* category.save.error */
+"category.save.error" = "تعذّر حفظ الفئة";
+
+/* category.empty */
+"category.empty" = "يمكن جمع العادات والأحداث\nالمترابطة في فئة واحدة";
+
+/* category.add */
+"category.add" = "إضافة فئة";
+
+/* common.error */
+"common.error" = "خطأ";
+
+/* common.ok */
+"common.ok" = "حسنًا";
+
+/* common.done */
+"common.done" = "تم";
+
+/* common.cancel */
+"common.cancel" = "إلغاء";
+
+/* creation.create */
+"creation.create" = "إنشاء";
+
+/* creation.title */
+"creation.title" = "إنشاء متتبّع";
+
+/* creation.habit */
+"creation.habit" = "عادة";
+
+/* creation.event */
+"creation.event" = "حدث غير منتظم";
+
+/* creation.new.habit */
+"creation.new.habit" = "عادة جديدة";
+
+/* creation.new.event */
+"creation.new.event" = "حدث جديد غير منتظم";
+
+/* creation.name.placeholder */
+"creation.name.placeholder" = "أدخل اسم المتتبّع";
+
+/* creation.name.limit */
+"creation.name.limit" = "الحد الأقصى %ld حرفًا";
+
+/* creation.emoji */
+"creation.emoji" = "رمز تعبيري";
+
+/* creation.color */
+"creation.color" = "اللون";
+
+/* tracker.color */
+"tracker.color" = "لون المتتبّع";
+
+/* schedule.title */
+"schedule.title" = "الجدول";
+
+/* schedule.every.day */
+"schedule.every.day" = "كل يوم";
+
+/* schedule.separator */
+"schedule.separator" = "، ";
+
+/* tracker.complete */
+"tracker.complete" = "وضع علامة الاكتمال";
+
+/* tracker.undo */
+"tracker.undo" = "إلغاء الاكتمال";
+
+/* weekday.monday */
+"weekday.monday" = "الاثنين";
+
+/* weekday.monday.short */
+"weekday.monday.short" = "اثن";
+
+/* weekday.tuesday */
+"weekday.tuesday" = "الثلاثاء";
+
+/* weekday.tuesday.short */
+"weekday.tuesday.short" = "ثلا";
+
+/* weekday.wednesday */
+"weekday.wednesday" = "الأربعاء";
+
+/* weekday.wednesday.short */
+"weekday.wednesday.short" = "أرب";
+
+/* weekday.thursday */
+"weekday.thursday" = "الخميس";
+
+/* weekday.thursday.short */
+"weekday.thursday.short" = "خمي";
+
+/* weekday.friday */
+"weekday.friday" = "الجمعة";
+
+/* weekday.friday.short */
+"weekday.friday.short" = "جمع";
+
+/* weekday.saturday */
+"weekday.saturday" = "السبت";
+
+/* weekday.saturday.short */
+"weekday.saturday.short" = "سبت";
+
+/* weekday.sunday */
+"weekday.sunday" = "الأحد";
+
+/* weekday.sunday.short */
+"weekday.sunday.short" = "أحد";
+"filter.title" = "عوامل التصفية";
+"filter.all" = "جميع المتتبعات";
+"filter.today" = "متتبعات اليوم";
+"filter.completed" = "المكتملة";
+"filter.incomplete" = "غير المكتملة";
+"tracker.pinned" = "المثبتة";
+"tracker.pin" = "تثبيت";
+"tracker.unpin" = "إلغاء التثبيت";
+"tracker.edit.title" = "تعديل العادة";
+"tracker.delete.confirm" = "هل تريد حذف هذا المتتبع بالتأكيد؟";
+"tracker.save.error" = "تعذر حفظ التغييرات. حاول مرة أخرى.";
+"common.edit" = "تعديل";
+"common.delete" = "حذف";
+"common.save" = "حفظ";
+"statistics.completed" = "المتتبعات المكتملة";

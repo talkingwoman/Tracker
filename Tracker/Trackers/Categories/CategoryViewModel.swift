@@ -1,4 +1,5 @@
 import Foundation
+import RswiftResources
 
 struct CategoryCellViewModel: Equatable {
     let title: String
@@ -46,7 +47,7 @@ final class CategoryViewModel {
             return true
         } catch {
             let message = (error as? TrackerCategoryStoreError)?.message
-                ?? "Не удалось сохранить категорию"
+                ?? R.string.localizable.categorySaveError()
             onError?(message)
             return false
         }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RswiftResources
 
 enum TrackerCreationMode {
     case habit
@@ -14,9 +15,9 @@ enum TrackerCreationMode {
     var navigationTitle: String {
         switch self {
         case .habit:
-            return "Новая привычка"
+            return R.string.localizable.creationNewHabit()
         case .irregularEvent:
-            return "Новое нерегулярное событие"
+            return R.string.localizable.creationNewEvent()
         }
     }
 }

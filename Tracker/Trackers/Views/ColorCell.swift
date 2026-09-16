@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RswiftResources
 
 final class ColorCell: UICollectionViewCell {
     static let reuseIdentifier = "ColorCell"
@@ -39,7 +40,7 @@ final class ColorCell: UICollectionViewCell {
         contentView.layer.borderColor = isSelected
             ? color.withAlphaComponent(0.3).cgColor
             : UIColor.clear.cgColor
-        accessibilityLabel = "Цвет трекера"
+        accessibilityLabel = R.string.localizable.trackerColor()
         accessibilityTraits = isSelected ? [.button, .selected] : .button
     }
 }

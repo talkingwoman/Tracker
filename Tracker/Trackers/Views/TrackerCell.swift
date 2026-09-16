@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RswiftResources
 
 final class TrackerCell: UICollectionViewCell {
     static let reuseIdentifier = "TrackerCell"
@@ -15,6 +16,7 @@ final class TrackerCell: UICollectionViewCell {
     private let cardView = UIView()
     private let emojiLabel = UILabel()
     private let titleLabel = UILabel()
+    private let pinImageView = UIImageView(image: UIImage(systemName: "pin.fill"))
     private let daysLabel = UILabel()
     private let completionButton = UIButton(type: .system)
 
@@ -37,9 +39,13 @@ final class TrackerCell: UICollectionViewCell {
         cardView.backgroundColor = tracker.color
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.title
+        pinImageView.isHidden = !tracker.isPinned
         daysLabel.text = daysText(completedDays)
         completionButton.setImage(isCompleted ? TrackerImages.completed : TrackerImages.add, for: .normal)
         completionButton.backgroundColor = isCompleted ? tracker.color.withAlphaComponent(0.3) : tracker.color
+        completionButton.accessibilityLabel = isCompleted
+            ? R.string.localizable.trackerUndo()
+            : R.string.localizable.trackerComplete()
         completionButton.isEnabled = completionEnabled
         completionButton.alpha = completionEnabled ? 1 : 0.3
     }
@@ -59,11 +65,16 @@ final class TrackerCell: UICollectionViewCell {
         titleLabel.textColor = .white
         titleLabel.numberOfLines = 2
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        pinImageView.tintColor = .white
+        pinImageView.contentMode = .scaleAspectFit
+        pinImageView.translatesAutoresizingMaskIntoConstraints = false
 
         daysLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        daysLabel.adjustsFontSizeToFitWidth = true
+        daysLabel.minimumScaleFactor = 0.75
         daysLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        completionButton.tintColor = .white
+        completionButton.tintColor = TrackerColors.background
         completionButton.layer.cornerRadius = 17
         completionButton.addTarget(self, action: #selector(completionButtonTapped), for: .touchUpInside)
         completionButton.translatesAutoresizingMaskIntoConstraints = false
@@ -71,6 +82,7 @@ final class TrackerCell: UICollectionViewCell {
         contentView.addSubview(cardView)
         cardView.addSubview(emojiLabel)
         cardView.addSubview(titleLabel)
+        cardView.addSubview(pinImageView)
         contentView.addSubview(daysLabel)
         contentView.addSubview(completionButton)
     }
@@ -85,11 +97,16 @@ final class TrackerCell: UICollectionViewCell {
             emojiLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
             emojiLabel.widthAnchor.constraint(equalToConstant: 24),
             emojiLabel.heightAnchor.constraint(equalToConstant: 24),
+            pinImageView.centerYAnchor.constraint(equalTo: emojiLabel.centerYAnchor),
+            pinImageView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
+            pinImageView.widthAnchor.constraint(equalToConstant: 12),
+            pinImageView.heightAnchor.constraint(equalToConstant: 12),
             titleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
             titleLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
             titleLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -12),
             daysLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             daysLabel.centerYAnchor.constraint(equalTo: completionButton.centerYAnchor),
+            daysLabel.trailingAnchor.constraint(lessThanOrEqualTo: completionButton.leadingAnchor, constant: -8),
             completionButton.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 8),
             completionButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             completionButton.widthAnchor.constraint(equalToConstant: 34),
@@ -102,19 +119,6 @@ final class TrackerCell: UICollectionViewCell {
     }
 
     private func daysText(_ count: Int) -> String {
-        let mod100 = count % 100
-        let mod10 = count % 10
-        let ending: String
-
-        if 11...14 ~= mod100 {
-            ending = "дней"
-        } else if mod10 == 1 {
-            ending = "день"
-        } else if 2...4 ~= mod10 {
-            ending = "дня"
-        } else {
-            ending = "дней"
-        }
-        return "\(count) \(ending)"
+        R.string.localizable.trackerDays_count(days: count)
     }
 }

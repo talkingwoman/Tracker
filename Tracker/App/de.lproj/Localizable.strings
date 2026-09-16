@@ -1,0 +1,173 @@
+/* tab.trackers */
+"tab.trackers" = "Tracker";
+
+/* tab.statistics */
+"tab.statistics" = "Statistik";
+
+/* onboarding.track */
+"onboarding.track" = "Verfolge nur, was du möchtest";
+
+/* onboarding.freedom */
+"onboarding.freedom" = "Auch wenn es nicht\nWasser oder Yoga ist";
+
+/* onboarding.start */
+"onboarding.start" = "Los geht’s!";
+
+/* statistics.empty */
+"statistics.empty" = "Noch nichts zum Auswerten";
+
+/* tracker.empty.title */
+"tracker.empty.title" = "Was möchtest du verfolgen?";
+
+/* tracker.search.empty */
+"tracker.search.empty" = "Nichts gefunden";
+
+/* tracker.add */
+"tracker.add" = "Tracker hinzufügen";
+
+/* tracker.date */
+"tracker.date" = "Datum auswählen";
+
+/* tracker.search */
+"tracker.search" = "Suchen";
+
+/* category.default */
+"category.default" = "Standard";
+
+/* category.title */
+"category.title" = "Kategorie";
+
+/* category.new */
+"category.new" = "Neue Kategorie";
+
+/* category.name.placeholder */
+"category.name.placeholder" = "Kategorienamen eingeben";
+
+/* category.duplicate */
+"category.duplicate" = "Eine Kategorie mit diesem Namen existiert bereits";
+
+/* category.save.error */
+"category.save.error" = "Kategorie konnte nicht gespeichert werden";
+
+/* category.empty */
+"category.empty" = "Gruppiere zusammengehörige\nGewohnheiten und Ereignisse";
+
+/* category.add */
+"category.add" = "Kategorie hinzufügen";
+
+/* common.error */
+"common.error" = "Fehler";
+
+/* common.ok */
+"common.ok" = "OK";
+
+/* common.done */
+"common.done" = "Fertig";
+
+/* common.cancel */
+"common.cancel" = "Abbrechen";
+
+/* creation.create */
+"creation.create" = "Erstellen";
+
+/* creation.title */
+"creation.title" = "Tracker erstellen";
+
+/* creation.habit */
+"creation.habit" = "Gewohnheit";
+
+/* creation.event */
+"creation.event" = "Unregelmäßiges Ereignis";
+
+/* creation.new.habit */
+"creation.new.habit" = "Neue Gewohnheit";
+
+/* creation.new.event */
+"creation.new.event" = "Neues unregelmäßiges Ereignis";
+
+/* creation.name.placeholder */
+"creation.name.placeholder" = "Trackernamen eingeben";
+
+/* creation.name.limit */
+"creation.name.limit" = "Maximal %ld Zeichen";
+
+/* creation.emoji */
+"creation.emoji" = "Emoji";
+
+/* creation.color */
+"creation.color" = "Farbe";
+
+/* tracker.color */
+"tracker.color" = "Trackerfarbe";
+
+/* schedule.title */
+"schedule.title" = "Zeitplan";
+
+/* schedule.every.day */
+"schedule.every.day" = "Jeden Tag";
+
+/* schedule.separator */
+"schedule.separator" = ", ";
+
+/* tracker.complete */
+"tracker.complete" = "Als erledigt markieren";
+
+/* tracker.undo */
+"tracker.undo" = "Erledigung rückgängig machen";
+
+/* weekday.monday */
+"weekday.monday" = "Montag";
+
+/* weekday.monday.short */
+"weekday.monday.short" = "Mo";
+
+/* weekday.tuesday */
+"weekday.tuesday" = "Dienstag";
+
+/* weekday.tuesday.short */
+"weekday.tuesday.short" = "Di";
+
+/* weekday.wednesday */
+"weekday.wednesday" = "Mittwoch";
+
+/* weekday.wednesday.short */
+"weekday.wednesday.short" = "Mi";
+
+/* weekday.thursday */
+"weekday.thursday" = "Donnerstag";
+
+/* weekday.thursday.short */
+"weekday.thursday.short" = "Do";
+
+/* weekday.friday */
+"weekday.friday" = "Freitag";
+
+/* weekday.friday.short */
+"weekday.friday.short" = "Fr";
+
+/* weekday.saturday */
+"weekday.saturday" = "Samstag";
+
+/* weekday.saturday.short */
+"weekday.saturday.short" = "Sa";
+
+/* weekday.sunday */
+"weekday.sunday" = "Sonntag";
+
+/* weekday.sunday.short */
+"weekday.sunday.short" = "So";
+"filter.title" = "Filter";
+"filter.all" = "Alle Tracker";
+"filter.today" = "Tracker für heute";
+"filter.completed" = "Abgeschlossen";
+"filter.incomplete" = "Nicht abgeschlossen";
+"tracker.pinned" = "Angeheftet";
+"tracker.pin" = "Anheften";
+"tracker.unpin" = "Loslösen";
+"tracker.edit.title" = "Gewohnheit bearbeiten";
+"tracker.delete.confirm" = "Möchtest du diesen Tracker wirklich löschen?";
+"tracker.save.error" = "Änderungen konnten nicht gespeichert werden. Bitte versuche es erneut.";
+"common.edit" = "Bearbeiten";
+"common.delete" = "Löschen";
+"common.save" = "Speichern";
+"statistics.completed" = "Abgeschlossene Tracker";

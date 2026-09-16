@@ -1,0 +1,173 @@
+/* tab.trackers */
+"tab.trackers" = "Trackers";
+
+/* tab.statistics */
+"tab.statistics" = "Statistics";
+
+/* onboarding.track */
+"onboarding.track" = "Track only what you want";
+
+/* onboarding.freedom */
+"onboarding.freedom" = "Even if it isn’t\nwater or yoga";
+
+/* onboarding.start */
+"onboarding.start" = "Let’s get started!";
+
+/* statistics.empty */
+"statistics.empty" = "Nothing to analyze yet";
+
+/* tracker.empty.title */
+"tracker.empty.title" = "What shall we track?";
+
+/* tracker.search.empty */
+"tracker.search.empty" = "Nothing found";
+
+/* tracker.add */
+"tracker.add" = "Add tracker";
+
+/* tracker.date */
+"tracker.date" = "Choose date";
+
+/* tracker.search */
+"tracker.search" = "Search";
+
+/* category.default */
+"category.default" = "Default";
+
+/* category.title */
+"category.title" = "Category";
+
+/* category.new */
+"category.new" = "New category";
+
+/* category.name.placeholder */
+"category.name.placeholder" = "Enter category name";
+
+/* category.duplicate */
+"category.duplicate" = "A category with this name already exists";
+
+/* category.save.error */
+"category.save.error" = "Could not save category";
+
+/* category.empty */
+"category.empty" = "Group related habits\nand events";
+
+/* category.add */
+"category.add" = "Add category";
+
+/* common.error */
+"common.error" = "Error";
+
+/* common.ok */
+"common.ok" = "OK";
+
+/* common.done */
+"common.done" = "Done";
+
+/* common.cancel */
+"common.cancel" = "Cancel";
+
+/* creation.create */
+"creation.create" = "Create";
+
+/* creation.title */
+"creation.title" = "Create tracker";
+
+/* creation.habit */
+"creation.habit" = "Habit";
+
+/* creation.event */
+"creation.event" = "Irregular event";
+
+/* creation.new.habit */
+"creation.new.habit" = "New habit";
+
+/* creation.new.event */
+"creation.new.event" = "New irregular event";
+
+/* creation.name.placeholder */
+"creation.name.placeholder" = "Enter tracker name";
+
+/* creation.name.limit */
+"creation.name.limit" = "Maximum %ld characters";
+
+/* creation.emoji */
+"creation.emoji" = "Emoji";
+
+/* creation.color */
+"creation.color" = "Color";
+
+/* tracker.color */
+"tracker.color" = "Tracker color";
+
+/* schedule.title */
+"schedule.title" = "Schedule";
+
+/* schedule.every.day */
+"schedule.every.day" = "Every day";
+
+/* schedule.separator */
+"schedule.separator" = ", ";
+
+/* tracker.complete */
+"tracker.complete" = "Mark as completed";
+
+/* tracker.undo */
+"tracker.undo" = "Undo completion";
+
+/* weekday.monday */
+"weekday.monday" = "Monday";
+
+/* weekday.monday.short */
+"weekday.monday.short" = "Mon";
+
+/* weekday.tuesday */
+"weekday.tuesday" = "Tuesday";
+
+/* weekday.tuesday.short */
+"weekday.tuesday.short" = "Tue";
+
+/* weekday.wednesday */
+"weekday.wednesday" = "Wednesday";
+
+/* weekday.wednesday.short */
+"weekday.wednesday.short" = "Wed";
+
+/* weekday.thursday */
+"weekday.thursday" = "Thursday";
+
+/* weekday.thursday.short */
+"weekday.thursday.short" = "Thu";
+
+/* weekday.friday */
+"weekday.friday" = "Friday";
+
+/* weekday.friday.short */
+"weekday.friday.short" = "Fri";
+
+/* weekday.saturday */
+"weekday.saturday" = "Saturday";
+
+/* weekday.saturday.short */
+"weekday.saturday.short" = "Sat";
+
+/* weekday.sunday */
+"weekday.sunday" = "Sunday";
+
+/* weekday.sunday.short */
+"weekday.sunday.short" = "Sun";
+"filter.title" = "Filters";
+"filter.all" = "All trackers";
+"filter.today" = "Trackers for today";
+"filter.completed" = "Completed";
+"filter.incomplete" = "Incomplete";
+"tracker.pinned" = "Pinned";
+"tracker.pin" = "Pin";
+"tracker.unpin" = "Unpin";
+"tracker.edit.title" = "Edit habit";
+"tracker.delete.confirm" = "Are you sure you want to delete this tracker?";
+"tracker.save.error" = "Could not save changes. Please try again.";
+"common.edit" = "Edit";
+"common.delete" = "Delete";
+"common.save" = "Save";
+"statistics.completed" = "Trackers completed";

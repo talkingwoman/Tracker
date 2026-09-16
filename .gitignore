@@ -1,0 +1,9 @@
+.DS_Store
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+# R.swift's build plugin generates these in DerivedData before compilation.
+*.generated.swift
+# Local AppMetrica configuration is not a source file.
+Tracker/App/AnalyticsKeys.plist

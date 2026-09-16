@@ -13,7 +13,7 @@ final class OptionsSectionHeader: UICollectionReusableView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 19, weight: .bold)
-        label.textColor = TrackerColors.black
+        label.textColor = TrackerColors.primary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
