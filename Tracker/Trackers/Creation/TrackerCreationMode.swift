@@ -15,9 +15,9 @@ enum TrackerCreationMode {
     var navigationTitle: String {
         switch self {
         case .habit:
-            return R.string.localizable.creationNewHabit()
+            R.string.localizable.creationNewHabit()
         case .irregularEvent:
-            return R.string.localizable.creationNewEvent()
+            R.string.localizable.creationNewEvent()
         }
     }
 }

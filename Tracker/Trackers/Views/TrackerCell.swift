@@ -16,7 +16,7 @@ final class TrackerCell: UICollectionViewCell {
     private let cardView = UIView()
     private let emojiLabel = UILabel()
     private let titleLabel = UILabel()
-    private let pinImageView = UIImageView(image: UIImage(systemName: "pin.fill"))
+    private let pinImageView = UIImageView(image: TrackerImages.pinned)
     private let daysLabel = UILabel()
     private let completionButton = UIButton(type: .system)
 
