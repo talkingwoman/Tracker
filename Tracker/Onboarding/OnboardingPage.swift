@@ -1,17 +1,19 @@
 import UIKit
+import DeveloperToolsSupport
+import RswiftResources
 
 struct OnboardingPage {
-    let image: ImageResource
+    let image: DeveloperToolsSupport.ImageResource
     let title: String
 
     static let pages = [
         OnboardingPage(
             image: .onboardingBlue,
-            title: "Отслеживайте только то, что хотите"
+            title: R.string.localizable.onboardingTrack()
         ),
         OnboardingPage(
             image: .onboardingRed,
-            title: "Даже если это\nне литры воды и йога"
+            title: R.string.localizable.onboardingFreedom()
         )
     ]
 }

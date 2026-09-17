@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RswiftResources
 
 final class ScheduleViewController: UIViewController {
     weak var delegate: ScheduleViewControllerDelegate?
@@ -27,9 +28,9 @@ final class ScheduleViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Расписание"
+        title = R.string.localizable.scheduleTitle()
         navigationItem.hidesBackButton = true
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = TrackerColors.background
         configureNavigationBar()
         setupViews()
         setupConstraints()
@@ -40,7 +41,7 @@ final class ScheduleViewController: UIViewController {
     private func configureNavigationBar() {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .systemBackground
+        appearance.backgroundColor = TrackerColors.background
         appearance.shadowColor = .clear
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
@@ -56,9 +57,9 @@ final class ScheduleViewController: UIViewController {
         tableView.backgroundColor = .clear
         tableView.translatesAutoresizingMaskIntoConstraints = false
 
-        doneButton.setTitle("Готово", for: .normal)
-        doneButton.setTitleColor(.white, for: .normal)
-        doneButton.backgroundColor = TrackerColors.black
+        doneButton.setTitle(R.string.localizable.commonDone(), for: .normal)
+        doneButton.setTitleColor(TrackerColors.background, for: .normal)
+        doneButton.backgroundColor = TrackerColors.primary
         doneButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         doneButton.layer.cornerRadius = 16
         doneButton.translatesAutoresizingMaskIntoConstraints = false

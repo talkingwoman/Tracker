@@ -4,8 +4,14 @@ protocol TrackerRecordStoreDelegate: AnyObject {
     func trackerRecordStoreDidUpdate(_ store: TrackerRecordStore)
 }
 
-final class TrackerRecordStore: NSObject {
+protocol TrackerRecordStoreProtocol: AnyObject {
+    var records: [TrackerRecord] { get }
+    var onChange: (() -> Void)? { get set }
+}
+
+final class TrackerRecordStore: NSObject, TrackerRecordStoreProtocol {
     weak var delegate: TrackerRecordStoreDelegate?
+    var onChange: (() -> Void)?
 
     var records: [TrackerRecord] {
         fetchedResultsController.fetchedObjects?.compactMap { object in
@@ -40,6 +46,9 @@ final class TrackerRecordStore: NSObject {
     }
 
     func add(_ record: TrackerRecord) throws {
+        guard !records.contains(where: {
+            $0.id == record.id && Calendar.current.isDate($0.date, inSameDayAs: record.date)
+        }) else { return }
         let object = TrackerRecordCoreData(context: context)
         object.id = record.id
         object.date = Calendar.current.startOfDay(for: record.date)
@@ -62,5 +71,6 @@ extension TrackerRecordStore: NSFetchedResultsControllerDelegate {
         _ controller: NSFetchedResultsController<NSFetchRequestResult>
     ) {
         delegate?.trackerRecordStoreDidUpdate(self)
+        onChange?()
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RswiftResources
 
 final class TabBarController: UITabBarController {
     private let trackerStore: TrackerStore
@@ -41,11 +42,11 @@ final class TabBarController: UITabBarController {
     private func setupTabBar() {
         tabBar.tintColor = TrackerColors.blue
         tabBar.unselectedItemTintColor = TrackerColors.gray
-        tabBar.backgroundColor = .systemBackground
+        tabBar.backgroundColor = TrackerColors.background
 
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .systemBackground
+        appearance.backgroundColor = TrackerColors.background
         appearance.shadowColor = TrackerColors.gray.withAlphaComponent(0.5)
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
@@ -67,7 +68,7 @@ final class TabBarController: UITabBarController {
             )
         )
         navigationController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: R.string.localizable.tabTrackers(),
             image: TrackerImages.trackersTab,
             selectedImage: TrackerImages.trackersTab
         )
@@ -75,9 +76,11 @@ final class TabBarController: UITabBarController {
     }
 
     private func makeStatisticsNavigationController() -> UINavigationController {
-        let navigationController = UINavigationController(rootViewController: StatisticsViewController())
+        let navigationController = UINavigationController(rootViewController: StatisticsViewController(
+            viewModel: StatisticsViewModel(store: recordStore)
+        ))
         navigationController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: R.string.localizable.tabStatistics(),
             image: TrackerImages.statisticsTab,
             selectedImage: TrackerImages.statisticsTab
         )

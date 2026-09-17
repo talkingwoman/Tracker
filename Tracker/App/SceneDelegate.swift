@@ -17,6 +17,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = scene as? UIWindowScene else { return }
 
+        // Hosted unit tests construct their own screens and isolated stores.
+        // Do not open or migrate the user's database while XCTest is running.
+        guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else { return }
+
         let stores = DataBaseStore.shared.makeStores()
 
         let window = UIWindow(windowScene: windowScene)

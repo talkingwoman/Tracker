@@ -1,4 +1,5 @@
 import UIKit
+import RswiftResources
 
 final class OnboardingPageViewController: UIViewController {
     private let page: OnboardingPage
@@ -32,7 +33,7 @@ final class OnboardingPageViewController: UIViewController {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let button = UIButton(type: .system)
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitle(R.string.localizable.onboardingStart(), for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = TrackerColors.black

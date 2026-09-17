@@ -1,4 +1,5 @@
 import CoreData
+import RswiftResources
 import UIKit
 
 protocol TrackerCategoryStoreDelegate: AnyObject {
@@ -17,8 +18,8 @@ enum TrackerCategoryStoreError: Error {
 
     var message: String {
         switch self {
-        case .emptyTitle: "Введите название категории"
-        case .duplicateTitle: "Категория с таким названием уже существует"
+        case .emptyTitle: R.string.localizable.categoryNamePlaceholder()
+        case .duplicateTitle: R.string.localizable.categoryDuplicate()
         }
     }
 }
@@ -74,7 +75,10 @@ final class TrackerCategoryStore: NSObject {
 
     private func makeCategory(from object: TrackerCategoryCoreData) -> TrackerCategory {
         let objects = (object.value(forKey: "trackers") as? NSSet)?.allObjects ?? []
-        let trackers = objects.compactMap { $0 as? TrackerCoreData }.compactMap(makeTracker)
+        let trackers = objects.compactMap { $0 as? TrackerCoreData }.compactMap(makeTracker).sorted {
+            if $0.title == $1.title { return $0.id.uuidString < $1.id.uuidString }
+            return $0.title.localizedStandardCompare($1.title) == .orderedAscending
+        }
         return TrackerCategory(title: object.title ?? "", trackers: trackers)
     }
 
@@ -88,7 +92,7 @@ final class TrackerCategoryStore: NSObject {
 
         let rawDays = object.value(forKey: "schedule") as? [Int] ?? []
         let schedule = Set(rawDays.compactMap(WeekDay.init(rawValue:)))
-        return Tracker(id: id, title: title, color: color, emoji: emoji, schedule: schedule)
+        return Tracker(id: id, title: title, color: color, emoji: emoji, schedule: schedule, isPinned: object.isPinned)
     }
 }
 

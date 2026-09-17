@@ -1,10 +1,11 @@
 import UIKit
+import RswiftResources
 
 final class CategoryViewController: UIViewController {
     private let viewModel: CategoryViewModel
 
     private let tableView = UITableView(frame: .zero, style: .plain)
-    private let emptyImageView = UIImageView(image: UIImage(named: "trackerPlaceholder"))
+    private let emptyImageView = UIImageView(image: UIImage(resource: .trackerPlaceholder))
     private let emptyLabel = UILabel()
     private let addButton = UIButton(type: .system)
 
@@ -18,8 +19,8 @@ final class CategoryViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Категория"
-        view.backgroundColor = .systemBackground
+        title = R.string.localizable.categoryTitle()
+        view.backgroundColor = TrackerColors.background
         configureViews()
         bindViewModel()
         viewModel.reload()
@@ -30,6 +31,7 @@ final class CategoryViewController: UIViewController {
         tableView.delegate = self
         tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.reuseIdentifier)
         tableView.rowHeight = 75
+        tableView.backgroundColor = .clear
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.layer.cornerRadius = 16
         tableView.clipsToBounds = true
@@ -37,16 +39,16 @@ final class CategoryViewController: UIViewController {
 
         emptyImageView.contentMode = .scaleAspectFit
         emptyImageView.translatesAutoresizingMaskIntoConstraints = false
-        emptyLabel.text = "Привычки и события можно\nобъединить по смыслу"
+        emptyLabel.text = R.string.localizable.categoryEmpty()
         emptyLabel.font = .systemFont(ofSize: 12, weight: .medium)
         emptyLabel.numberOfLines = 2
         emptyLabel.textAlignment = .center
         emptyLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        addButton.setTitle("Добавить категорию", for: .normal)
-        addButton.setTitleColor(.white, for: .normal)
+        addButton.setTitle(R.string.localizable.categoryAdd(), for: .normal)
+        addButton.setTitleColor(TrackerColors.background, for: .normal)
         addButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        addButton.backgroundColor = TrackerColors.black
+        addButton.backgroundColor = TrackerColors.primary
         addButton.layer.cornerRadius = 16
         addButton.addTarget(self, action: #selector(addCategoryTapped), for: .touchUpInside)
         addButton.translatesAutoresizingMaskIntoConstraints = false
@@ -73,8 +75,8 @@ final class CategoryViewController: UIViewController {
     private func bindViewModel() {
         viewModel.onCategoriesChanged = { [weak self] in self?.updateContent() }
         viewModel.onError = { [weak self] message in
-            let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            let alert = UIAlertController(title: R.string.localizable.commonError(), message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: R.string.localizable.commonOk(), style: .default))
             self?.present(alert, animated: true)
         }
     }
@@ -103,6 +105,14 @@ extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
             for: indexPath
         ) as? CategoryCell else { return UITableViewCell() }
         cell.configure(with: viewModel.cellViewModels[indexPath.row])
+        var corners: CACornerMask = []
+        if indexPath.row == 0 { corners.formUnion([.layerMinXMinYCorner, .layerMaxXMinYCorner]) }
+        if indexPath.row == viewModel.cellViewModels.count - 1 {
+            corners.formUnion([.layerMinXMaxYCorner, .layerMaxXMaxYCorner])
+        }
+        cell.layer.cornerRadius = 16
+        cell.layer.maskedCorners = corners
+        cell.clipsToBounds = true
         return cell
     }
 
